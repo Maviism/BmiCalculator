@@ -1,6 +1,8 @@
+import 'package:bmi_calculator/brainCalc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gender_selection/gender_selection.dart';
+import 'resultPage.dart';
 
 const String appBarText = 'BMI CALCULATOR';
 
@@ -10,8 +12,8 @@ class FirstScreen extends StatefulWidget {
 }
 
 class _FirstScreenState extends State<FirstScreen> {
-  double _height = 50;
-  double _weight = 50;
+  int height = 150;
+  int weight = 50;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,101 +25,88 @@ class _FirstScreenState extends State<FirstScreen> {
           SizedBox(
             height: 10,
           ),
-          Expanded(
-            child: Container(
-              width: 140,
-              child: TextField(
-                keyboardType: TextInputType.number,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly
-                ], //only number can be entered
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Enter your Age',
-                ),
+          Container(
+            width: 140,
+            child: TextField(
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly
+              ], //only number can be entered
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter your Age',
               ),
             ),
           ),
-          Expanded(
-            child: GenderSelection(
-              selectedGenderIconBackgroundColor: Colors.indigo, // default red
-              checkIconAlignment: Alignment.centerRight, // default bottomRight
-              selectedGenderCheckIcon: null, // default Icons.check
-              onChanged: (Gender gender) {
-                print(gender);
-              },
-              equallyAligned: true,
-              animationDuration: Duration(milliseconds: 400),
-              isCircular: true, // default : true,
-              isSelectedGenderIconCircular: true,
-              opacityOfGradient: 0.6,
-              padding: const EdgeInsets.all(3),
-              size: 120, //default : 120
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: EdgeInsets.all(5),
+                margin: EdgeInsets.all(5),
+                child: Text('Male'),
+                color: Colors.grey,
+              ),
+              Container(
+                padding: EdgeInsets.all(5),
+                margin: EdgeInsets.all(5),
+                child: Text('Female'),
+                color: Colors.grey,
+              )
+            ],
           ),
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Container(
-                  child: Row(
-                    children: [
-                      buildRotatedBox(_height),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('Height'),
-                          Text(_height.toString()),
-                        ],
-                      ),
-                    ],
-                  ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              RotatedBox(
+                quarterTurns: 3,
+                child: Slider(
+                  value: height.toDouble(),
+                  min: 50.0,
+                  max: 220.0,
+                  onChanged: (double newValue) {
+                    setState(() {
+                      height = newValue.toInt();
+                    });
+                  },
                 ),
-                Container(
-                  child: Row(
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('Weight'),
-                          Text(
-                            _weight.toString(),
-                          ),
-                        ],
-                      ),
-                      buildRotatedBox(_weight),
-                    ],
-                  ),
+              ),
+              Text('height${height.toString()}'),
+              Text(weight.toString()),
+              RotatedBox(
+                quarterTurns: 3,
+                child: Slider(
+                  value: weight.toDouble(),
+                  min: 10.0,
+                  max: 120.0,
+                  onChanged: (double newValue) {
+                    setState(() {
+                      weight = newValue.toInt();
+                    });
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          Expanded(
-            child: Text('Hasiil'),
-          ),
-          Expanded(
-            flex: 1,
-            child: Text('Deskripsi'),
+          GestureDetector(
+            onTap: () {
+              BrainCalc calc = BrainCalc(heeight: height, weeight: weight);
+              print(calc.perhitungan());
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return ResultPage(
+                      resultbmi: calc.perhitungan(),
+                      rekomen: calc.hasil(),
+                    );
+                  },
+                ),
+              );
+            },
+            child: Text('cek hasil'),
           ),
         ],
-      ),
-    );
-  }
-
-  RotatedBox buildRotatedBox(tipe) {
-    return RotatedBox(
-      quarterTurns: 3,
-      child: Slider(
-        value: tipe,
-        min: 0,
-        max: 120,
-        label: tipe.round().toString(),
-        onChanged: (double value) {
-          setState(() {
-            tipe = value;
-            print(tipe);
-          });
-        },
       ),
     );
   }
