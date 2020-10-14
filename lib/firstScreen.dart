@@ -1,16 +1,12 @@
 import 'dart:ui';
 
 import 'package:bmi_calculator/brainCalc.dart';
+import 'package:bmi_calculator/genderCards.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'resultPage.dart';
+import 'package:bmi_calculator/const.dart';
 
-const String appBarText = 'BMI CALCULATOR';
-const kActiveCard = Colors.blueGrey;
-const kInactivateCard = Colors.grey;
-
-const String gambarLk = 'images/male.png';
-const String gambarPr = 'images/female.png';
 Color colour;
 enum Gender { male, female }
 
@@ -32,31 +28,21 @@ class _FirstScreenState extends State<FirstScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // SizedBox(
-          //   height: 10,
-          // ),
           Expanded(
             flex: 2,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                GestureDetector(
-                  onTap: () {
+                GenderCards(
+                  genderColor: selectedGender == Gender.male
+                      ? kActiveCard
+                      : kInactivateCard,
+                  genderType: 'Male',
+                  onPress: () {
                     setState(() {
                       selectedGender = Gender.male;
                     });
                   },
-                  child: Container(
-                    width: 80,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: selectedGender == Gender.male
-                          ? kActiveCard
-                          : kInactivateCard,
-                    ),
-                    child: Center(child: Text('Malee')),
-                  ),
                 ),
                 Container(
                   width: 140,
@@ -71,26 +57,16 @@ class _FirstScreenState extends State<FirstScreen> {
                     ),
                   ),
                 ),
-                GestureDetector(
-                  onTap: () {
+                GenderCards(
+                  genderColor: selectedGender == Gender.female
+                      ? kActiveCard
+                      : kInactivateCard,
+                  genderType: 'Female',
+                  onPress: () {
                     setState(() {
                       selectedGender = Gender.female;
                     });
                   },
-                  child: Container(
-                    width: 80,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: selectedGender == Gender.female
-                          ? kActiveCard
-                          : kInactivateCard,
-                    ),
-                    child: Center(
-                        child: Text(
-                      'Female',
-                    )),
-                  ),
                 )
               ],
             ),
@@ -99,69 +75,76 @@ class _FirstScreenState extends State<FirstScreen> {
             flex: 7,
             child: Container(
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Column(
-                    children: [
-                      RotatedBox(
-                        quarterTurns: 3,
-                        child: Container(
-                          width: 400,
-                          child: SliderTheme(
-                            data: SliderTheme.of(context)
-                                .copyWith(trackHeight: 20),
-                            child: Slider(
-                              value: height.toDouble(),
-                              min: 50.0,
-                              max: 220.0,
-                              onChanged: (double newValue) {
-                                setState(() {
-                                  height = newValue.toInt();
-                                });
-                              },
+                  Expanded(
+                    child: Column(
+                      children: [
+                        RotatedBox(
+                          quarterTurns: 3,
+                          child: Container(
+                            width: 400,
+                            child: SliderTheme(
+                              data: SliderTheme.of(context)
+                                  .copyWith(trackHeight: 20),
+                              child: Slider(
+                                value: height.toDouble(),
+                                min: 50.0,
+                                max: 220.0,
+                                onChanged: (double newValue) {
+                                  setState(() {
+                                    height = newValue.toInt();
+                                  });
+                                },
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Text('height ${height.toString()}'),
-                    ],
-                  ),
-                  Container(
-                    child: FittedBox(
-                      child: Image.asset(
-                        selectedGender == Gender.female ? gambarPr : gambarLk,
-                        fit: BoxFit.fill,
-                      ),
+                        Text('Height ${height.toString()}'),
+                      ],
                     ),
-                    width: 20,
-                    height: height.toDouble(),
                   ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      RotatedBox(
-                        quarterTurns: 3,
-                        child: Container(
-                          width: 400,
-                          height: 100,
-                          child: SliderTheme(
-                            data: SliderTheme.of(context)
-                                .copyWith(trackHeight: 20),
-                            child: Slider(
-                              value: weight.toDouble(),
-                              min: 10.0,
-                              max: 120.0,
-                              onChanged: (double newValue) {
-                                setState(() {
-                                  weight = newValue.toInt();
-                                });
-                              },
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        image: DecorationImage(
+                            image: AssetImage('images/male.png'),
+                            fit: BoxFit.fill),
+                      ),
+                      width: weight.toDouble() + 50,
+                      height: height.toDouble() + 150,
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        RotatedBox(
+                          quarterTurns: 3,
+                          child: Container(
+                            width: 400,
+                            height: 100,
+                            child: SliderTheme(
+                              data: SliderTheme.of(context)
+                                  .copyWith(trackHeight: 20),
+                              child: Slider(
+                                value: weight.toDouble(),
+                                min: 10.0,
+                                max: 120.0,
+                                onChanged: (double newValue) {
+                                  setState(() {
+                                    weight = newValue.toInt();
+                                  });
+                                },
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Text('weight ${weight.toString()}'),
-                    ],
+                        Text('Weight ${weight.toString()}'),
+                      ],
+                    ),
                   ),
                 ],
               ),
