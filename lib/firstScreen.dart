@@ -3,8 +3,6 @@ import 'dart:ui';
 import 'package:bmi_calculator/brainCalc.dart';
 import 'package:bmi_calculator/genderCards.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'resultPage.dart';
 import 'package:bmi_calculator/const.dart';
 
 Color colour;
@@ -18,6 +16,7 @@ class FirstScreen extends StatefulWidget {
 class _FirstScreenState extends State<FirstScreen> {
   int height = 150;
   int weight = 50;
+  int age = 25;
   Gender selectedGender;
   @override
   Widget build(BuildContext context) {
@@ -31,7 +30,7 @@ class _FirstScreenState extends State<FirstScreen> {
           Expanded(
             flex: 2,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 GenderCards(
                   genderColor: selectedGender == Gender.male
@@ -44,18 +43,47 @@ class _FirstScreenState extends State<FirstScreen> {
                     });
                   },
                 ),
-                Container(
-                  width: 140,
-                  child: TextField(
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly
-                    ], //only number can be entered
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Enter your Age',
+                Row(
+                  children: [
+                    Container(
+                      width: 50,
+                      height: 50,
+                      child: FloatingActionButton(
+                        child: Text('+'),
+                        onPressed: () {
+                          setState(() {
+                            age++;
+                          });
+                        },
+                      ),
                     ),
-                  ),
+                    Container(
+                      margin: EdgeInsets.all(10),
+                      width: 60,
+                      height: 60,
+                      color: Colors.purple,
+                      child: Center(
+                        child: Text(
+                          age.toString(),
+                          style: TextStyle(
+                            fontSize: 30,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: 50,
+                      height: 50,
+                      child: FloatingActionButton(
+                        child: Text('-'),
+                        onPressed: () {
+                          setState(() {
+                            age--;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
                 ),
                 GenderCards(
                   genderColor: selectedGender == Gender.female
@@ -108,9 +136,10 @@ class _FirstScreenState extends State<FirstScreen> {
                     flex: 2,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.black,
                         image: DecorationImage(
-                            image: AssetImage('images/male.png'),
+                            image: AssetImage(selectedGender == Gender.male
+                                ? gambarLk
+                                : gambarPr),
                             fit: BoxFit.fill),
                       ),
                       width: weight.toDouble() + 50,
@@ -159,15 +188,24 @@ class _FirstScreenState extends State<FirstScreen> {
                 onTap: () {
                   BrainCalc calc = BrainCalc(heeight: height, weeight: weight);
                   print(calc.perhitungan());
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return ResultPage(
-                          resultbmi: calc.perhitungan(),
-                          rekomen: calc.hasil(),
-                        );
-                      },
+                  showDialog(
+                    context: context,
+                    child: AlertDialog(
+                      title: Text('Hasil'),
+                      content: SingleChildScrollView(
+                        child: ListBody(children: [
+                          Center(child: Text(calc.perhitungan())),
+                          Text(calc.hasil())
+                        ]),
+                      ),
+                      actions: [
+                        TextButton(
+                          child: Text('OK'),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        )
+                      ],
                     ),
                   );
                 },
